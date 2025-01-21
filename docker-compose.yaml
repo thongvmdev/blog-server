@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   backend:
-    image: image-blog-server
+    image: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    labels:
+      - "version=${{ github.sha }}"
     container_name: container-blog-server
     build:
       context: .

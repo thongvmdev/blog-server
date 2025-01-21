@@ -92,9 +92,16 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image using Docker Compose
+        id: build-and-push
         run: |
+          # Build the Docker image using docker-compose
           docker-compose -f docker-compose.yaml build
-          docker-compose -f docker-compose.yaml push
+
+          # Push the Docker image using docker-compose (if not a pull request)
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            docker-compose -f docker-compose.yaml push
+          fi
+
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
