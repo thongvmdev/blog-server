@@ -1,9 +1,9 @@
 version: "3.8"
 services:
   backend:
-    image: ghcr.io/REPLACE_REPOSITORY:${REPLACE_SHA}
+    image: ghcr.io/REPLACE_REPOSITORY:REPLACE_SHA
     labels:
-      - "version=${REPLACE_SHA}"
+      - "version=REPLACE_SHA"
     container_name: container-blog-server
     build:
       context: .

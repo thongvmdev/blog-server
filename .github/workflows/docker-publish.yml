@@ -93,13 +93,8 @@ jobs:
       # Replace placeholders in docker-compose.yml with actual values
       - name: Replace placeholders in docker-compose.yaml
         run: |
-          if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s|REPLACE_REPOSITORY|${{ github.repository }}|g" docker-compose.yaml
-            sed -i '' "s|REPLACE_SHA|${{ github.sha }}|g" docker-compose.yaml
-          else
-            sed -i "s|REPLACE_REPOSITORY|${{ github.repository }}|g" docker-compose.yaml
-            sed -i "s|REPLACE_SHA|${{ github.sha }}|g" docker-compose.yaml
-          fi
+          sed -i "s|REPLACE_REPOSITORY|${{ github.repository }}|g" docker-compose.yaml
+          sed -i "s|REPLACE_SHA|${{ github.sha }}|g" docker-compose.yaml
 
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image using Docker Compose
