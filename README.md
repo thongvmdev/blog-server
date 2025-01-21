@@ -1,0 +1,1 @@
+IMAGE_TAG=$(date +%Y%m%d%H%M) docker-compose up --build

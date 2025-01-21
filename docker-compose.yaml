@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  backend:
+    image: image-blog-server
+    container_name: container-blog-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+
+networks:
+  nginx_network:
+    external: true
+
+
