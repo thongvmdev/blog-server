@@ -17,7 +17,8 @@ RUN yarn build
 ARG DOCKER_METADATA
 
 # Extract specific labels from the metadata and set them as Docker image labels
-RUN echo $DOCKER_METADATA | jq -r '.labels | to_entries | .[] | "LABEL \(.key)=\(.value)"' >> Dockerfile.labels
+RUN echo "DOCKER_METADATA: $DOCKER_METADATA"
+
 
 # Add the dynamically generated labels to the Docker image
 RUN cat Dockerfile.labels
