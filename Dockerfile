@@ -13,7 +13,7 @@ RUN yarn build
 # Add labels from the build arguments
 ARG DOCKER_LABELS
 
-LABEL $DOCKER_LABELS
+RUN echo $DOCKER_LABELS | xargs -I {} sh -c 'LABEL {}'
 
 ENV PORT=${PORT:-3000}
 
