@@ -17,8 +17,8 @@ RUN yarn build
 ARG DOCKER_METADATA
 
 # Use jq to parse the JSON string properly
-RUN echo "DOCKER_METADATA.labels: $(echo $DOCKER_METADATA | jq -r .labels)" && \
-    echo "DOCKER_METADATA.version: $(echo $DOCKER_METADATA | jq -r .version)"
+RUN echo "DOCKER_METADATA: $DOCKER_METADATA"
+
 
 ENV PORT=${PORT:-3000}
 
