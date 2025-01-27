@@ -6,9 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        IMAGE_TAG: ${IMAGE_TAG}
-        # LABELS: ${LABELS}
     ports:
       - "${PORT}:${PORT}"
     env_file:
