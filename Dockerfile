@@ -2,6 +2,9 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Install jq (JSON processor)
+RUN apk add --no-cache jq
+
 COPY package.json yarn.lock* ./
 
 RUN yarn install
@@ -10,9 +13,7 @@ COPY . .
 
 RUN yarn build
 
-# ARG DOCKER_LABELS
-# RUN echo "DOCKER_LABELS passed to the build: $DOCKER_LABELS"
-
+# Accept the metadata as an argument
 ARG DOCKER_METADATA
 
 # Extract labels and convert them to Dockerfile-compatible LABEL commands
@@ -26,4 +27,3 @@ ENV PORT=${PORT:-3000}
 EXPOSE ${PORT}
 
 CMD ["yarn", "start"]
-
