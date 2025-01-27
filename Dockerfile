@@ -14,10 +14,10 @@ COPY . .
 RUN yarn build
 
 # Use the DOCKER_LABELS build argument
-ARG DOCKER_LABELS
+ARG DOCKER_METADATA
 
-# Apply labels
-RUN echo $DOCKER_LABELS | jq -r 'to_entries | .[] | "LABEL \(.key)=\(.value)"' | xargs -I {} sh -c '{}'
+# Use jq to parse the JSON and log specific properties
+RUN echo "DOCKER_METADATA.labels: $(echo ${DOCKER_METADATA} | jq -r .labels)"
 
 ENV PORT=${PORT:-3000}
 
