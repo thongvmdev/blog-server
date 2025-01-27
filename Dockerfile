@@ -11,12 +11,10 @@ COPY . .
 RUN yarn build
 
 ARG DOCKER_LABELS
+RUN echo "DOCKER_LABELS passed to the build: $DOCKER_LABELS"
 
-RUN if [ -n "$DOCKER_LABELS" ]; then \
-        echo "$DOCKER_LABELS" | while IFS='=' read -r key value; do \
-        printf "LABEL %s=\"%s\"\n" "$key" "$value" >> Dockerfile.generated; \
-    done && cat Dockerfile.generated; \
-fi
+ARG DOCKER_METADATA
+RUN echo "DOCKER_METADATA passed to the build: $DOCKER_METADATA"
 
 ENV PORT=${PORT:-3000}
 
