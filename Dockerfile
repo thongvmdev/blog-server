@@ -10,11 +10,16 @@ COPY . .
 
 RUN yarn build
 
-ARG DOCKER_LABELS
-RUN echo "DOCKER_LABELS passed to the build: $DOCKER_LABELS"
+# ARG DOCKER_LABELS
+# RUN echo "DOCKER_LABELS passed to the build: $DOCKER_LABELS"
 
 ARG DOCKER_METADATA
-RUN echo "DOCKER_METADATA passed to the build: $DOCKER_METADATA"
+
+# Extract labels and convert them to Dockerfile-compatible LABEL commands
+RUN echo $DOCKER_METADATA | jq -r '.labels | to_entries | map("LABEL \(.key)=\(.value | @sh)") | .[]' > labels.sh
+
+# Apply all labels to the image
+RUN sh labels.sh
 
 ENV PORT=${PORT:-3000}
 
