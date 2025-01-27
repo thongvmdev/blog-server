@@ -81,7 +81,7 @@ jobs:
           echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> .env
-          echo "DOCKER_METADATA=${{ steps.meta.outputs.bake-file }}" >> .env
+          echo "DOCKER_METADATA=${{ steps.meta.outputs.labels }}" >> .env
 
       - name: Log environment variables
         run: cat .env
