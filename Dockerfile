@@ -13,11 +13,12 @@ COPY . .
 
 RUN yarn build
 
-# Use the DOCKER_LABELS build argument
+# Define the DOCKER_METADATA argument (metadata from docker/metadata-action)
 ARG DOCKER_METADATA
 
-# Use jq to parse the JSON and log specific properties
-RUN echo "DOCKER_METADATA.labels: $(echo ${DOCKER_METADATA} | jq -r .labels)"
+# Use jq to parse the JSON string properly
+RUN echo "DOCKER_METADATA.labels: $(echo $DOCKER_METADATA | jq -r .labels)" && \
+    echo "DOCKER_METADATA.version: $(echo $DOCKER_METADATA | jq -r .version)"
 
 ENV PORT=${PORT:-3000}
 
