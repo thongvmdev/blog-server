@@ -18,7 +18,8 @@ ARG DOCKER_METADATA
 
 # Extract specific labels from the metadata and set them as Docker image labels
 RUN echo "DOCKER_METADATA: $DOCKER_METADATA" && \
-    eval $(echo $DOCKER_METADATA | jq -r '.labels | to_entries | .[] | "LABEL \(.key)=\(.value)"')
+    echo $DOCKER_METADATA | jq -r '.labels | to_entries | .[] | "LABEL \(.key)=\(.value)"' > /tmp/labels && \
+    while read -r label; do echo $label; done < /tmp/labels
 
 ENV PORT=${PORT:-3000}
 
