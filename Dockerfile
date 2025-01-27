@@ -10,15 +10,17 @@ COPY . .
 
 RUN yarn build
 
-# Add labels from the build arguments
 ARG DOCKER_LABELS
 
-LABEL maintainer="your-email@example.com" \
-    version="1.0" \
-    description="Business Blog Server"
+RUN if [ -n "$DOCKER_LABELS" ]; then \
+        echo "$DOCKER_LABELS" | while IFS='=' read -r key value; do \
+        printf "LABEL %s=\"%s\"\n" "$key" "$value" >> Dockerfile.generated; \
+    done && cat Dockerfile.generated; \
+fi
 
 ENV PORT=${PORT:-3000}
 
 EXPOSE ${PORT}
 
 CMD ["yarn", "start"]
+
