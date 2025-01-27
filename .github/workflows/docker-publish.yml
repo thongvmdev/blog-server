@@ -16,7 +16,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  REPOSITORY: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -62,7 +62,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Create .env file
         run: |
@@ -86,14 +86,7 @@ jobs:
         id: build-and-push
         if: github.event_name != 'pull_request'
         run: |
-            # Flatten the tags and labels for Docker Compose
-            IMAGE_TAG=${{ steps.meta.outputs.tags }}
-
-            # Export variables to be used in docker-compose
-            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
-            # Build and push using Docker Compose
-            docker-compose -f docker-compose.yaml build --build-arg IMAGE_TAG=${IMAGE_TAG}
+            docker-compose -f docker-compose.yaml build --build-arg IMAGE_TAG=${{ steps.meta.outputs.tags }}
             docker-compose -f docker-compose.yaml push
 
 
