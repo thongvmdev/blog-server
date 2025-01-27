@@ -88,14 +88,14 @@ jobs:
         run: |
             # Flatten the tags and labels for Docker Compose
             IMAGE_TAG=$(echo '${{ steps.meta.outputs.tags }}' | jq -r '.[0]')  # Get the first tag
-            LABELS=$(echo '${{ steps.meta.outputs.labels }}' | jq -R -s 'split("\n") | map(select(length > 0)) | map(split("=")) | map({"key": .[0], "value": .[1]}) | from_entries | to_entries | map("\(.key)=\(.value)") | join(",")')  # Flatten labels into key=value pairs
+            # LABELS=$(echo '${{ steps.meta.outputs.labels }}' | jq -R -s 'split("\n") | map(select(length > 0)) | map(split("=")) | map({"key": .[0], "value": .[1]}) | from_entries | to_entries | map("\(.key)=\(.value)") | join(",")')  # Flatten labels into key=value pairs
 
             # Export variables to be used in docker-compose
             echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-            echo "LABELS=$LABELS" >> $GITHUB_ENV
+            # echo "LABELS=$LABELS" >> $GITHUB_ENV
 
             # Build and push using Docker Compose
-            docker-compose -f docker-compose.yaml build --build-arg IMAGE_TAG=${IMAGE_TAG} --build-arg LABELS=${LABELS}
+            docker-compose -f docker-compose.yaml build --build-arg IMAGE_TAG=${IMAGE_TAG}
             docker-compose -f docker-compose.yaml push
 
 

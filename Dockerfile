@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY package.json yarn.lock* ./
 
-ARG LABELS
+# ARG LABELS
 
-LABEL $(echo $LABELS | sed 's/,/ /g')
+# LABEL $(echo $LABELS | sed 's/,/ /g')
 
 RUN yarn install
 
