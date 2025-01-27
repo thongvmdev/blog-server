@@ -83,6 +83,9 @@ jobs:
           echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> .env
           echo "DOCKER_LABELS=${{ steps.meta.outputs.labels }}" >> .env
 
+      - name: Log environment variables
+        run: cat .env
+
       # Build and push Docker image
       - name: Build and push Docker image using Docker Compose
         id: build-and-push
