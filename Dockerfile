@@ -16,9 +16,11 @@ RUN yarn build
 # Define the DOCKER_METADATA argument (metadata from docker/metadata-action)
 ARG DOCKER_METADATA
 
-# Use jq to parse the JSON string properly
-RUN echo "DOCKER_METADATA: $DOCKER_METADATA"
+# Extract specific labels from the metadata and set them as Docker image labels
+RUN echo $DOCKER_METADATA | jq -r '.labels | to_entries | .[] | "LABEL \(.key)=\(.value)"' >> Dockerfile.labels
 
+# Add the dynamically generated labels to the Docker image
+RUN cat Dockerfile.labels
 
 ENV PORT=${PORT:-3000}
 
