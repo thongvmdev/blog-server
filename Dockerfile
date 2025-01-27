@@ -4,15 +4,16 @@ WORKDIR /app
 
 COPY package.json yarn.lock* ./
 
-# ARG LABELS
-
-# LABEL $(echo $LABELS | sed 's/,/ /g')
-
 RUN yarn install
 
 COPY . .
 
 RUN yarn build
+
+# Add labels from the build arguments
+ARG DOCKER_LABELS
+
+LABEL $(echo $DOCKER_LABELS | xargs)
 
 ENV PORT=${PORT:-3000}
 

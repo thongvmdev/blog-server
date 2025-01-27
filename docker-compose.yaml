@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - DOCKER_LABELS=${DOCKER_LABELS}
     ports:
       - "${PORT}:${PORT}"
     env_file:

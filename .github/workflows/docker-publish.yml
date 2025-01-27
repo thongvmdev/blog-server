@@ -54,7 +54,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.DOCKER_REGISTRY_PW }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -81,6 +81,7 @@ jobs:
           echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> .env
+          echo "DOCKER_LABELS=${{ steps.meta.outputs.labels }}" >> .env
 
       # Build and push Docker image
       - name: Build and push Docker image using Docker Compose
@@ -89,9 +90,6 @@ jobs:
         run: |
             docker-compose -f docker-compose.yaml build
             docker-compose -f docker-compose.yaml push
-
-
-
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
