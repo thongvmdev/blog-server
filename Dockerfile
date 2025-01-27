@@ -13,14 +13,11 @@ COPY . .
 
 RUN yarn build
 
-# Accept the metadata as an argument
-ARG DOCKER_METADATA
+# Use the DOCKER_LABELS build argument
+ARG DOCKER_LABELS
 
-# Extract labels and convert them to Dockerfile-compatible LABEL commands
-RUN echo $DOCKER_METADATA | jq -r '.labels | to_entries | map("LABEL \(.key)=\(.value | @sh)") | .[]' > labels.sh
-
-# Apply all labels to the image
-RUN sh labels.sh
+# Apply labels
+RUN echo $DOCKER_LABELS | jq -r 'to_entries | .[] | "LABEL \(.key)=\(.value)"' | xargs -I {} sh -c '{}'
 
 ENV PORT=${PORT:-3000}
 
