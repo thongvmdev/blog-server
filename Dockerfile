@@ -13,6 +13,10 @@ RUN yarn build
 # Add labels from the build arguments
 ARG DOCKER_LABELS
 
+LABEL maintainer="your-email@example.com" \
+    version="1.0" \
+    description="Business Blog Server"
+
 ENV PORT=${PORT:-3000}
 
 EXPOSE ${PORT}
