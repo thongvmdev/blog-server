@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
       args:
         - DOCKER_LABELS=${DOCKER_LABELS}
+        - DOCKER_METADATA=${DOCKER_METADATA}
     ports:
       - "${PORT}:${PORT}"
     env_file:
