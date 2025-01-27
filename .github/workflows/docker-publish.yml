@@ -87,7 +87,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
             # Flatten the tags and labels for Docker Compose
-            IMAGE_TAG=$(echo '${{ steps.meta.outputs.tags }}' | jq -r '.[0]')  # Get the first tag
+            IMAGE_TAG=${{ steps.meta.outputs.tags }}
 
             # Export variables to be used in docker-compose
             echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
