@@ -6,10 +6,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # args:
-      #   BUILDTIME: ${BUILDTIME}
-      #   VERSION: ${VERSION}
-      #   REVISION: ${REVISION}
+      args:
+        BUILDTIME: ${BUILDTIME}
+        VERSION: ${VERSION}
+        REVISION: ${REVISION}
     ports:
       - "${PORT}:${PORT}"
     env_file:

@@ -93,6 +93,18 @@ jobs:
             docker-compose -f docker-compose.yaml build
             docker-compose -f docker-compose.yaml push
 
+      # Run Docker image for testing
+      - name: Run Docker image for testing
+        run: |
+          docker-compose -f docker-compose.yaml up -d
+          sleep 30 # Wait for the container to be fully up and running
+          docker-compose -f docker-compose.yaml ps
+
+      # Stop and remove Docker container
+      - name: Stop and remove Docker container
+        run: |
+          docker-compose -f docker-compose.yaml down
+
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
