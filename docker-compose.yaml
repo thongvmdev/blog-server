@@ -7,7 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - DOCKER_METADATA=${DOCKER_METADATA}
+        BUILDTIME: ${BUILDTIME}
+        VERSION: ${VERSION}
+        REVISION: ${REVISION}
     ports:
       - "${PORT}:${PORT}"
     env_file:

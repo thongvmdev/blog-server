@@ -81,11 +81,10 @@ jobs:
           echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> .env
-          echo "DOCKER_METADATA=${{ steps.meta.outputs.json }}" >> .env
-
-      - name: Log environment variables
-        run: cat .env
-
+          echo "BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}" >> .env
+          echo "VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}" >> .env
+          echo "REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}" >> .env
+            
       # Build and push Docker image
       - name: Build and push Docker image using Docker Compose
         id: build-and-push
