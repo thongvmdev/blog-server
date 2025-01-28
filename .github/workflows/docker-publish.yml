@@ -60,14 +60,14 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        uses: docker/metadata-action@v5.6.1
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch,suffix={{commit_date 'YYYYMMDD-HHmm'}}
-            type=sha,suffix={{commit_date 'YYYYMMDD-HHmm'}},format=short
+            type=ref,event=branch,suffix=-{{commit_date 'YYYYMMDD-HHmm'}}
+            type=sha,suffix=-{{commit_date 'YYYYMMDD-HHmm'}},format=short
             type=ref,event=tag
-            type=ref,event=pr,suffix={{commit_date 'YYYYMMDD-HHmm'}}
+            type=ref,event=pr,suffix={-{commit_date 'YYYYMMDD-HHmm'}}
 
       - name: Create .env file
         run: |
