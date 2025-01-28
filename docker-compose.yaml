@@ -10,6 +10,7 @@ services:
         BUILDTIME: ${BUILDTIME}
         VERSION: ${VERSION}
         REVISION: ${REVISION}
+        PORT: ${PORT}
     ports:
       - "${PORT}:${PORT}"
     env_file:

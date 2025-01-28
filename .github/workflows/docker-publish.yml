@@ -63,6 +63,11 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch,suffix={{commit_date 'YYYYMMDD-HHmm'}}
+            type=sha,suffix={{commit_date 'YYYYMMDD-HHmm'}},format=short
+            type=ref,event=tag
+            type=ref,event=pr,suffix={{commit_date 'YYYYMMDD-HHmm'}}
 
       - name: Create .env file
         run: |
@@ -92,17 +97,6 @@ jobs:
         run: |
             docker-compose -f docker-compose.yaml build
             docker-compose -f docker-compose.yaml push
-
-      # Run Docker image for testing
-      - name: Run Docker image for testing
-        run: |
-          docker-compose -f docker-compose.yaml up
-          sleep 30 # Wait for the container to be fully up and running
-
-      # Stop and remove Docker container
-      - name: Stop and remove Docker container
-        run: |
-          docker-compose -f docker-compose.yaml down
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
