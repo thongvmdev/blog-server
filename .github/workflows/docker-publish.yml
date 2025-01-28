@@ -64,10 +64,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch,suffix=-{{commit_date 'YYYYMMDD-HHmm'}}
-            type=sha,suffix=-{{commit_date 'YYYYMMDD-HHmm'}},format=short
+            type=ref,event=branch,suffix=-{{commit_date 'YYYYMMDD-HHmmss'}}
+            type=sha,suffix=-{{commit_date 'YYYYMMDD-HHmmss'}},format=short
             type=ref,event=tag
-            type=ref,event=pr,suffix={-{commit_date 'YYYYMMDD-HHmm'}}
+            type=ref,event=pr,suffix={-{commit_date 'YYYYMMDD-HHmmss'}}
 
       - name: Create .env file
         run: |
