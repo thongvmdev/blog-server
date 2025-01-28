@@ -96,9 +96,8 @@ jobs:
       # Run Docker image for testing
       - name: Run Docker image for testing
         run: |
-          docker-compose -f docker-compose.yaml up -d
+          docker-compose -f docker-compose.yaml up
           sleep 30 # Wait for the container to be fully up and running
-          docker-compose -f docker-compose.yaml ps
 
       # Stop and remove Docker container
       - name: Stop and remove Docker container
