@@ -81,8 +81,8 @@ jobs:
         id: build-and-push
         if: github.event_name != 'pull_request'
         run: |
-            docker-compose -f docker-compose.yaml build
-            docker-compose -f docker-compose.yaml push
+            docker-compose -f docker-compose-build.yaml build
+            docker-compose -f docker-compose-build.yaml push
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker

@@ -22,7 +22,7 @@ import { ResErrorModel } from './models';
 
 import corsOptions from '@/config/corsOptions';
 import connectDB from '@/config/dbConnect';
-import { envConfig } from '@/config/env.config';
+// import { envConfig } from '@/config/env.config';
 import { EHttpStatusCode } from '@/enums';
 import { errorHandlerMiddleware } from '@/middlewares';
 import v1Routes from '@/routes/v1Routes';
@@ -36,9 +36,9 @@ s3Service.connectToS3();
 const app = express();
 app.use(cors(corsOptions));
 
-if (envConfig.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+// if (envConfig.NODE_ENV === 'development') {
+app.use(morgan('dev'));
+// }
 
 app.use(compression());
 app.use(cookieParser());
