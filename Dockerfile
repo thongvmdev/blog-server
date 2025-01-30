@@ -1,6 +1,5 @@
 FROM node:22-alpine
 
-ARG PORT
 ARG BUILDTIME
 ARG VERSION
 ARG REVISION
@@ -19,6 +18,6 @@ COPY . .
 
 RUN yarn build
 
-EXPOSE $PORT
+EXPOSE ${PORT}
 
 CMD ["yarn", "start"]

@@ -10,11 +10,10 @@ services:
         BUILDTIME: ${BUILDTIME}
         VERSION: ${VERSION}
         REVISION: ${REVISION}
-        PORT: ${PORT}
-    ports:
-      - "${PORT}:${PORT}"
-    env_file:
-      - .env
+    # ports:
+    #   - "${PORT}:${PORT}"
+    # env_file:
+    #   - .env
 
 # networks:
 #   nginx_network:
