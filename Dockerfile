@@ -1,10 +1,13 @@
 FROM node:22-alpine
 
-# Define build arguments
 ARG PORT
 ARG BUILDTIME
 ARG VERSION
 ARG REVISION
+
+LABEL BUILDTIME=$BUILDTIME \
+      VERSION=$VERSION \
+      REVISION=$REVISION
 
 WORKDIR /app
 
@@ -15,10 +18,6 @@ RUN yarn install
 COPY . .
 
 RUN yarn build
-
-LABEL BUILDTIME=$BUILDTIME \
-      VERSION=$VERSION \
-      REVISION=$REVISION
 
 EXPOSE $PORT
 

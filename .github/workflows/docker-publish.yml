@@ -71,20 +71,6 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "NODE_ENV=production" >> .env
-          echo "ACCESSJWTSECRET=${{ secrets.ACCESSJWTSECRET }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "REFHRESTJWTSECRET=${{ secrets.REFHRESTJWTSECRET }}" >> .env
-          echo "PWSECRET=${{ secrets.PWSECRET }}" >> .env
-          echo "MONGODB_USERNAME=${{ secrets.MONGODB_USERNAME }}" >> .env
-          echo "MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}" >> .env
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> .env
           echo "BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}" >> .env
           echo "VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}" >> .env
