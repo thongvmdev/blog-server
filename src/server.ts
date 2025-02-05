@@ -16,15 +16,13 @@ import cors from 'cors';
 import express from 'express';
 import { type Request, type Response, type NextFunction } from 'express';
 import mongoose from 'mongoose';
-import morgan from 'morgan';
 
 import { ResErrorModel } from './models';
 
 import corsOptions from '@/config/corsOptions';
 import connectDB from '@/config/dbConnect';
-// import { envConfig } from '@/config/env.config';
 import { EHttpStatusCode } from '@/enums';
-import { errorHandlerMiddleware } from '@/middlewares';
+import { errorHandlerMiddleware, morganMiddleware } from '@/middlewares';
 import v1Routes from '@/routes/v1Routes';
 import { s3Service } from '@/services';
 
@@ -36,10 +34,7 @@ s3Service.connectToS3();
 const app = express();
 app.use(cors(corsOptions));
 
-// if (envConfig.NODE_ENV === 'development') {
-app.use(morgan('dev'));
-// }
-
+app.use(morganMiddleware);
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());

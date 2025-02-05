@@ -1,8 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 
-import { logEvents } from './logger';
-
+import { logger } from '@/common/utils/logger';
 import { EHttpStatusCode } from '@/enums';
 import { ResErrorModel } from '@/models';
 
@@ -19,10 +18,8 @@ const limiter = ({ inMinute = 60 * 1000, max = 100 }: ILimiter = {}) =>
       message: 'Too many login attempts from this IP, please try again after a 60 second pause'
     },
     handler: (req: Request, res: Response, _next: NextFunction, options) => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      logEvents(
-        `Too Many Requests: ${options.message.message}\t${req.method}\t${req.url}\t${req.headers.origin}`,
-        'errLog.log'
+      void logger.error(
+        `Too Many Requests: ${options.message.message}\t${req.method}\t${req.url}\t${req.headers.origin}`
       );
 
       return res
