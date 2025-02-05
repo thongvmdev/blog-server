@@ -1,6 +1,10 @@
 import { type CorsOptions } from 'cors';
 
-import allowedOrigins from './allowOrigins';
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'https://api.hanu-nus.com'
+];
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
