@@ -1,7 +1,7 @@
 import morgan, { type StreamOptions } from 'morgan';
 
-import { logger } from '@/common/utils/logger';
 import { envConfig } from '@/config/env.config';
+import { logger } from '@/utils/logger';
 
 const morganStream: StreamOptions = {
   write: (message: string) => {

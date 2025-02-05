@@ -1,8 +1,8 @@
 import { type Request, type Response, type NextFunction } from 'express';
 
-import { logger } from '@/common/utils/logger';
 import { EHttpStatusCode } from '@/enums';
 import { ResErrorModel } from '@/models';
+import { logger } from '@/utils/logger';
 
 class AppError extends Error {
   public statusCode: number;

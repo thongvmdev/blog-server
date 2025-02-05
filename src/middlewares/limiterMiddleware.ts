@@ -1,9 +1,9 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 
-import { logger } from '@/common/utils/logger';
 import { EHttpStatusCode } from '@/enums';
 import { ResErrorModel } from '@/models';
+import { logger } from '@/utils/logger';
 
 interface ILimiter {
   inMinute?: number;
