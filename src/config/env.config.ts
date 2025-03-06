@@ -14,8 +14,8 @@ const config = () => ({
   PORT: getEnvVar('PORT', 8080),
   JWT_SECRET: getEnvVar('JWT_SECRET')
 });
-console.log('🚀 ~ config:', config);
 
 const envConfig = config();
+console.log('🚀 ~ envConfig:', envConfig);
 
 export { envConfig };

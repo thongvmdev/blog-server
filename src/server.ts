@@ -3,7 +3,7 @@ require('express-async-errors');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'development') {
   require('module-alias/register');
 }
 
