@@ -12,11 +12,11 @@ export const generateJwtPayload = (params: IHydratedUserModel): IJwtUserPayload 
 export const handleResponseJwt = (user: IHydratedUserModel): IJwtToken => {
   const payload = generateJwtPayload(user);
 
-  const accessToken = jwt.sign(payload, process.env.ACCESSJWTSECRET, {
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: EJwtToken.ACCESS_TOKEN_EXPIRATION
   });
 
-  const refreshToken = jwt.sign(payload, process.env.REFHRESTJWTSECRET, {
+  const refreshToken = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: EJwtToken.REFRESH_TOKEN_EXPIRATION
   });
 

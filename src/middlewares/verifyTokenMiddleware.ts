@@ -18,7 +18,7 @@ const verifyTokenMiddleware = (
       .json(ResErrorModel('No token provided', EJwtExpirationErrorCode.NO_TOKEN_PROVIDED));
   }
 
-  jwt.verify(token.split(' ')[1], process.env.ACCESSJWTSECRET, (err, user: IJwtUserPayload) => {
+  jwt.verify(token.split(' ')[1], process.env.JWT_SECRET, (err, user: IJwtUserPayload) => {
     if (err) {
       return res
         .status(EHttpStatusCode.UNAUTHORIZED)

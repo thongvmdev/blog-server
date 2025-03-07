@@ -112,14 +112,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 const refreshAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   const refreshToken = req.body.refreshToken;
 
-  jwt.verify(refreshToken, process.env.REFHRESTJWTSECRET, (err, user) => {
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res
         .status(EHttpStatusCode.UNAUTHORIZED)
         .json(ResErrorModel(err.message, EJwtExpirationErrorCode.REFRESH_TOKEN_EXPIRED));
     }
 
-    const newAccessToken = jwt.sign(generateJwtPayload(user), process.env.ACCESSJWTSECRET, {
+    const newAccessToken = jwt.sign(generateJwtPayload(user), process.env.JWT_SECRET, {
       expiresIn: EJwtToken.ACCESS_TOKEN_EXPIRATION
     });
 
