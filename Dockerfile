@@ -12,7 +12,11 @@ WORKDIR /app
 
 COPY package.json yarn.lock* ./
 
-RUN yarn set version berry && yarn install
+RUN corepack enable
+
+RUN yarn set version berry
+
+RUN yarn install
 
 COPY . .
 
