@@ -12,8 +12,7 @@ const getEnvVar = (key: string, defaultValue?: string | number): string | number
 const config = () => ({
   NODE_ENV: getEnvVar('NODE_ENV', 'development'),
   PORT: getEnvVar('PORT', 8080),
-  JWT_SECRET: getEnvVar('JWT_SECRET'),
-  APP_URL: getEnvVar('APP_URL')
+  JWT_SECRET: getEnvVar('JWT_SECRET')
 });
 
 const envConfig = config();
