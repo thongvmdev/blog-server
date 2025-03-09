@@ -3,7 +3,6 @@ import validator from 'validator';
 
 import { EUserRole } from '@/enums';
 import { type IUserModel } from '@/interfaces';
-import { isValidUrl } from '@/utils';
 
 const UserSchema = new mongoose.Schema<IUserModel>(
   {
@@ -33,11 +32,7 @@ const UserSchema = new mongoose.Schema<IUserModel>(
       }
     },
     profilePictureUrl: {
-      type: String,
-      validate: {
-        validator: isValidUrl,
-        message: (props) => `${props.value} is not a valid image URL!`
-      }
+      type: String
     },
     authentication: {
       password: { type: String },

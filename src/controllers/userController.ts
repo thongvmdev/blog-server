@@ -1,10 +1,12 @@
+import fs from 'fs';
+import path from 'path';
+
 import { type Request, type Response, type NextFunction } from 'express';
 import { type TokenPayload } from 'google-auth-library';
 import { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid';
 
-import { hostnameImgUrlMap } from '@/constants';
-import { EHttpStatusCode } from '@/enums';
+import { EHttpStatusCode, ETypeUpload } from '@/enums';
 import { authentication, random } from '@/helpers';
 import {
   type IDeletedUserResponse,
@@ -15,8 +17,12 @@ import {
   type IUserModelKeys
 } from '@/interfaces';
 import { ResErrorModel, ResSuccessModel, ResUserSuccessModel, UserModel } from '@/models';
-import { s3Service } from '@/services';
-import { getUrlInfo, handleResponseJwt, removeLeadingSlash } from '@/utils';
+import {
+  deleteFolder,
+  downloadAndSaveImage,
+  handleResponseJwt,
+  moveFileToUploadFolder
+} from '@/utils';
 
 interface IRequestWithUser extends Request {
   user: IJwtUserPayload;
@@ -28,6 +34,9 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     const deletedUser = await UserModel.findOneAndDelete({ _id: userId });
 
     if (deletedUser) {
+      const folderPath = path.join(__dirname, '../../uploads/users', userId);
+      deleteFolder(folderPath);
+
       return res.status(EHttpStatusCode.OK).json(
         ResSuccessModel<IDeletedUserResponse>({
           message: `Deleted User: ${deletedUser.email}`
@@ -137,32 +146,39 @@ const updateUserProfileImage = async (
   try {
     const user = await UserModel.findById(req.user.id);
     const file = req.file;
+    const { type } = req.body;
 
     if (!user) {
       return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('User not found'));
+    }
+
+    if (!type) {
+      return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('Type'));
+    }
+
+    if (type !== ETypeUpload.USERS) {
+      return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('Type is invalid'));
     }
 
     if (!file) {
       return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('No file uploaded'));
     }
 
-    const userProfileUrlObj = getUrlInfo(user.profilePictureUrl);
-    const oldImgKey = userProfileUrlObj?.pathname;
-
-    const s3Data = await s3Service.uploadToS3(file);
-    user.profilePictureUrl = s3Data.url;
-
-    if (hostnameImgUrlMap[userProfileUrlObj?.hostname] === 'AWS' && oldImgKey) {
-      void s3Service.deleteFromS3(removeLeadingSlash(oldImgKey));
+    if (user.profilePictureUrl) {
+      const oldImagePath = path.join(__dirname, '../../', user.profilePictureUrl);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
     }
+
+    const imageUrl = moveFileToUploadFolder(file.filename, type, user.id);
+    user.profilePictureUrl = imageUrl;
 
     await user.save();
 
     return res
       .status(EHttpStatusCode.OK)
-      .json(
-        ResSuccessModel<{ newProfilePictureUrl: string }>({ newProfilePictureUrl: s3Data.url })
-      );
+      .json(ResSuccessModel<{ newProfilePictureUrl: string }>({ newProfilePictureUrl: imageUrl }));
   } catch (error) {
     next(error);
   }
@@ -220,9 +236,14 @@ const saveOAuthUser = async (
     const newUser = new UserModel({
       username,
       email,
-      name: emailPrefix,
-      profilePictureUrl: picture ?? null
+      name: emailPrefix
     });
+
+    const savedAvatarPath = await downloadAndSaveImage(picture, newUser.id);
+
+    if (savedAvatarPath) {
+      newUser.profilePictureUrl = savedAvatarPath;
+    }
 
     await newUser.save();
 

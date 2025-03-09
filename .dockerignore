@@ -2,4 +2,5 @@ node_modules
 .git
 Dockerfile
 issues_note
+uploads
 .env

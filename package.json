@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1609.0",
+    "axios": "^1.8.2",
     "body-parser": "^1.20.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -74,5 +75,6 @@
   "_moduleAliases": {
     "@root": ".",
     "@": "./dist"
-  }
+  },
+  "packageManager": "yarn@4.7.0"
 }

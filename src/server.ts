@@ -7,8 +7,6 @@ if (process.env.NODE_ENV !== 'development') {
   require('module-alias/register');
 }
 
-import path from 'path';
-
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -24,12 +22,10 @@ import connectDB from '@/config/dbConnect';
 import { EHttpStatusCode } from '@/enums';
 import { errorHandlerMiddleware, morganMiddleware } from '@/middlewares';
 import v1Routes from '@/routes/v1Routes';
-import { s3Service } from '@/services';
 
 const PORT = process.env.PORT || 4000;
 
 void connectDB();
-s3Service.connectToS3();
 
 const app = express();
 app.use(cors(corsOptions));
@@ -38,7 +34,6 @@ app.use(morganMiddleware);
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', v1Routes);
 

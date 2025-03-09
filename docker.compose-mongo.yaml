@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: business_blog_mongo
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: blog_dev
+      MONGO_INITDB_ROOT_PASSWORD: sj68IWnXTgXFsKHa
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

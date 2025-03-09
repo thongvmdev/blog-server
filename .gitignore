@@ -12,6 +12,7 @@ logs/
 .env
 
 dist
+uploads
 
 # OS generated files
 .DS_Store

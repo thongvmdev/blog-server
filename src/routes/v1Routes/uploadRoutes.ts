@@ -8,7 +8,7 @@ const router = express.Router();
 router.post(
   '/image',
   verifyTokenMiddleware,
-  multerMiddleware.imageUpload.single('file'),
+  multerMiddleware.uploadImg.single('file'),
   uploadController.uploadImage
 );
 

@@ -1,3 +1,5 @@
+import path from 'path';
+
 import dayjs from 'dayjs';
 import { type NextFunction, type Request, type Response } from 'express';
 import { difference, isEmpty, pick } from 'lodash';
@@ -7,6 +9,7 @@ import { updateTagUsageCount } from './tagController';
 import { EArticleStatus, EHttpStatusCode } from '@/enums';
 import { type IArticle, type CustomJwtMiddlewareRequest } from '@/interfaces';
 import { ArticleModel, ResSuccessModel, ResErrorModel, ResSuccessModelWithPaging } from '@/models';
+import { deleteFolder } from '@/utils';
 
 /**
  * Calculates the relevance score for a given item based on its usage count, engagement score, and recency of use.
@@ -274,8 +277,10 @@ const articleController = {
   async deleteArticle(req: CustomJwtMiddlewareRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      const articleId = req.params.id;
+
       const article = await ArticleModel.findOneAndDelete({
-        _id: req.params.id,
+        _id: articleId,
         author: userId
       });
 
@@ -286,6 +291,9 @@ const articleController = {
             ResErrorModel('Article not found or you do not have permission to delete this article')
           );
       }
+
+      const folderPath = path.join(__dirname, '../../uploads/articles', articleId);
+      deleteFolder(folderPath);
 
       void updateTagUsageCount(article.tags, false);
 

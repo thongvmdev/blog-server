@@ -14,7 +14,7 @@ router.patch('/password', verifyTokenMiddleware, userController.updatePassword);
 router.patch(
   '/profile-image',
   verifyTokenMiddleware,
-  multerMiddleware.profileImageUpload.single('file'),
+  multerMiddleware.uploadImg.single('file'),
   userController.updateUserProfileImage
 );
 
