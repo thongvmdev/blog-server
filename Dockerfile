@@ -10,7 +10,7 @@ LABEL BUILDTIME=$BUILDTIME \
 
 WORKDIR /app
 
-COPY package.json yarn.lock* ./
+COPY package.json yarn.lock* .yarnrc.yml ./
 
 RUN corepack enable
 
