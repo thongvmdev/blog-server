@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock* ./
 
-RUN yarn set version 4.7.0 && yarn install
+RUN yarn set version berry && yarn install
 
 COPY . .
 
