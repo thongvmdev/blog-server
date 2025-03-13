@@ -5,7 +5,7 @@ const logFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   format.printf(({ level, message, timestamp }: any) => {
     return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-  })
+  }),
 );
 
 const logger = createLogger({
@@ -18,7 +18,7 @@ const logger = createLogger({
       filename: '%DATE%-request.log',
       datePattern: 'YYYY-MM-DD',
       maxSize: '20m',
-      maxFiles: '14d'
+      maxFiles: '14d',
     }),
     new transports.DailyRotateFile({
       dirname: 'logs',
@@ -26,9 +26,9 @@ const logger = createLogger({
       datePattern: 'YYYY-MM-DD',
       maxSize: '20m',
       maxFiles: '14d',
-      level: 'error'
-    })
-  ]
+      level: 'error',
+    }),
+  ],
 });
 
 export { logger };

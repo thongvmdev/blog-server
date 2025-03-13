@@ -1,10 +1,11 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import { envConfig } from '@/config/env.config';
 
-export const authentication = (salt: string, password: string): string => {
+export function authentication(salt: string, password: string): string {
   return crypto
     .createHmac('sha256', [salt, password].join('/'))
-    .update(process.env.PWSECRET)
+    .update(envConfig.PWSECRET)
     .digest('hex');
-};
+}
 
 export const random = () => crypto.randomBytes(128).toString('hex');

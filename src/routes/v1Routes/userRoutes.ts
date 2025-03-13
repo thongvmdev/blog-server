@@ -1,7 +1,7 @@
-import express from 'express';
-
 import { userController } from '@/controllers';
+
 import { multerMiddleware, verifyTokenGoogleProvider, verifyTokenMiddleware } from '@/middlewares';
+import express from 'express';
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.patch(
   '/profile-image',
   verifyTokenMiddleware,
   multerMiddleware.uploadImg.single('file'),
-  userController.updateUserProfileImage
+  userController.updateUserProfileImage,
 );
 
 export default router;

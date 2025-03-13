@@ -1,25 +1,25 @@
-import { type Request, type Response, type NextFunction } from 'express';
-import rateLimit from 'express-rate-limit';
-
+import type { NextFunction, Request, Response } from 'express';
 import { EHttpStatusCode } from '@/enums';
+
 import { ResErrorModel } from '@/models';
 import { logger } from '@/utils/logger';
+import rateLimit from 'express-rate-limit';
 
 interface ILimiter {
   inMinute?: number;
   max?: number;
 }
 
-const limiter = ({ inMinute = 60 * 1000, max = 100 }: ILimiter = {}) =>
-  rateLimit({
+function limiter({ inMinute = 60 * 1000, max = 100 }: ILimiter = {}) {
+  return rateLimit({
     windowMs: inMinute,
     max,
     message: {
-      message: 'Too many login attempts from this IP, please try again after a 60 second pause'
+      message: 'Too many login attempts from this IP, please try again after a 60 second pause',
     },
     handler: (req: Request, res: Response, _next: NextFunction, options) => {
       void logger.error(
-        `Too Many Requests: ${options.message.message}\t${req.method}\t${req.url}\t${req.headers.origin}`
+        `Too Many Requests: ${options.message.message}\t${req.method}\t${req.url}\t${req.headers.origin}`,
       );
 
       return res
@@ -27,12 +27,13 @@ const limiter = ({ inMinute = 60 * 1000, max = 100 }: ILimiter = {}) =>
         .json(ResErrorModel(options?.message?.message));
     },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
   });
+}
 
 const limiterMiddleware = {
   limiter,
-  defaultLimiter: limiter()
+  defaultLimiter: limiter(),
 };
 
 export default limiterMiddleware;

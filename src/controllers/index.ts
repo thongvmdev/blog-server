@@ -7,12 +7,12 @@ import uploadController from './uploadController';
 import userController from './userController';
 
 export {
-  authController,
-  userController,
   articleController,
-  commentController,
-  uploadController,
+  authController,
   categoryController,
+  commentController,
   tagController,
-  updateTagUsageCount
+  updateTagUsageCount,
+  uploadController,
+  userController,
 };

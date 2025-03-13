@@ -2,10 +2,10 @@ name: Docker
 
 on:
   push:
-    branches: ['develop']
+    branches: [develop]
     tags: ['v*.*.*']
   pull_request:
-    branches: [ "develop" ]
+    branches: [develop]
 
 env:
   REGISTRY: ghcr.io
@@ -54,10 +54,10 @@ jobs:
           echo "BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}" >> .env
           echo "VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}" >> .env
           echo "REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}" >> .env
-            
+
       - name: Build and push Docker image using Docker Compose
         id: build-and-push
         if: github.event_name != 'pull_request'
         run: |
-            docker-compose -f docker-compose-build.yaml build
-            docker-compose -f docker-compose-build.yaml push
+          docker-compose -f docker-compose-build.yaml build
+          docker-compose -f docker-compose-build.yaml push

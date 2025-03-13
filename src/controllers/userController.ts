@@ -1,56 +1,50 @@
-import fs from 'fs';
-import path from 'path';
+import type { CustomJwtMiddlewareRequest, IDeletedUserResponse, IJwtUserPayload, IRequestWithUploadMedia, IResponseUserToken, IUserModelKeys } from '@/interfaces';
+import type { NextFunction, Request, Response } from 'express';
 
-import { type Request, type Response, type NextFunction } from 'express';
-import { type TokenPayload } from 'google-auth-library';
-import { isEmpty } from 'lodash';
-import { nanoid } from 'nanoid';
-
+import type { TokenPayload } from 'google-auth-library';
+import fs from 'node:fs';
+import path from 'node:path';
 import { EHttpStatusCode, ETypeUpload } from '@/enums';
+
 import { authentication, random } from '@/helpers';
-import {
-  type IDeletedUserResponse,
-  type IJwtUserPayload,
-  type IResponseUserToken,
-  type CustomJwtMiddlewareRequest,
-  type IRequestWithUploadMedia,
-  type IUserModelKeys
-} from '@/interfaces';
 import { ResErrorModel, ResSuccessModel, ResUserSuccessModel, UserModel } from '@/models';
 import {
   deleteFolder,
   downloadAndSaveImage,
   handleResponseJwt,
-  moveFileToUploadFolder
+  moveFileToUploadFolder,
 } from '@/utils';
+import { isEmpty } from 'lodash';
+import { nanoid } from 'nanoid';
 
 interface IRequestWithUser extends Request {
   user: IJwtUserPayload;
 }
 
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+async function deleteUser(req: Request, res: Response, next: NextFunction) {
   try {
     const { userId } = req.params;
-    const deletedUser = await UserModel.findOneAndDelete({ _id: userId });
-
+    const deletedUser = await UserModel.findOneAndDelete({ _id: userId }, { returnDocument: 'before' });
     if (deletedUser) {
       const folderPath = path.join(__dirname, '../../uploads/users', userId);
       deleteFolder(folderPath);
 
       return res.status(EHttpStatusCode.OK).json(
         ResSuccessModel<IDeletedUserResponse>({
-          message: `Deleted User: ${deletedUser.email}`
-        })
+          message: `Deleted User`,
+        }),
       );
-    } else {
+    }
+    else {
       return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('User not found'));
     }
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const getUserInfo = async (req: IRequestWithUser, res: Response, next: NextFunction) => {
+async function getUserInfo(req: IRequestWithUser, res: Response, next: NextFunction) {
   try {
     const userId = req?.user?.id;
     const userData = await UserModel.findById(userId).select('-authentication');
@@ -61,12 +55,13 @@ const getUserInfo = async (req: IRequestWithUser, res: Response, next: NextFunct
 
     const userFields: IUserModelKeys[] = ['email', 'profilePictureUrl', 'bio', 'name', 'username'];
     return res.status(EHttpStatusCode.OK).json(ResUserSuccessModel(userData, userFields));
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const updateUser = async (req: IRequestWithUser, res: Response, next: NextFunction) => {
+async function updateUser(req: IRequestWithUser, res: Response, next: NextFunction) {
   try {
     const userId = req.user.id;
     const updateData = req.body;
@@ -86,16 +81,17 @@ const updateUser = async (req: IRequestWithUser, res: Response, next: NextFuncti
     }
 
     const user = await UserModel.findByIdAndUpdate(userId, updateData, { new: true }).select(
-      '-authentication'
+      '-authentication',
     );
 
     return res.status(EHttpStatusCode.OK).json(ResUserSuccessModel(user));
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const updatePassword = async (req, res, next) => {
+async function updatePassword(req, res, next) {
   try {
     const userId = req.user.id;
     const { currentPassword, newPassword } = req.body;
@@ -125,7 +121,7 @@ const updatePassword = async (req, res, next) => {
 
     user.authentication = {
       salt: newSalt,
-      password: newHashedPassword
+      password: newHashedPassword,
     };
 
     await user.save();
@@ -133,16 +129,13 @@ const updatePassword = async (req, res, next) => {
     return res
       .status(EHttpStatusCode.OK)
       .json(ResSuccessModel<string>('Password updated successfully.'));
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const updateUserProfileImage = async (
-  req: IRequestWithUploadMedia,
-  res: Response,
-  next: NextFunction
-) => {
+async function updateUserProfileImage(req: IRequestWithUploadMedia, res: Response, next: NextFunction) {
   try {
     const user = await UserModel.findById(req.user.id);
     const file = req.file;
@@ -152,11 +145,7 @@ const updateUserProfileImage = async (
       return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('User not found'));
     }
 
-    if (!type) {
-      return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('Type'));
-    }
-
-    if (type !== ETypeUpload.USERS) {
+    if (!type || type !== ETypeUpload.USERS) {
       return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('Type is invalid'));
     }
 
@@ -179,16 +168,13 @@ const updateUserProfileImage = async (
     return res
       .status(EHttpStatusCode.OK)
       .json(ResSuccessModel<{ newProfilePictureUrl: string }>({ newProfilePictureUrl: imageUrl }));
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const checkUserExistence = async (
-  req: IRequestWithUploadMedia,
-  res: Response,
-  next: NextFunction
-) => {
+async function checkUserExistence(req: IRequestWithUploadMedia, res: Response, next: NextFunction) {
   try {
     const email = req.params.email;
     const user = await UserModel.findOne({ email });
@@ -200,27 +186,25 @@ const checkUserExistence = async (
         ResSuccessModel<IResponseUserToken>({
           tokens: {
             accessToken,
-            refreshToken
+            refreshToken,
           },
           user: ResUserSuccessModel(user),
-          exists: true
-        })
+          exists: true,
+        }),
       );
-    } else {
+    }
+    else {
       return res
         .status(EHttpStatusCode.OK)
         .json(ResSuccessModel<{ exists: boolean }>({ exists: false }));
     }
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const saveOAuthUser = async (
-  req: CustomJwtMiddlewareRequest,
-  res: Response,
-  next: NextFunction
-) => {
+async function saveOAuthUser(req: CustomJwtMiddlewareRequest, res: Response, next: NextFunction) {
   try {
     const { email, picture } = req.user as TokenPayload;
 
@@ -236,10 +220,11 @@ const saveOAuthUser = async (
     const newUser = new UserModel({
       username,
       email,
-      name: emailPrefix
+      name: emailPrefix,
     });
 
     const savedAvatarPath = await downloadAndSaveImage(picture, newUser.id);
+    console.log('🚀 ~ savedAvatarPath:', savedAvatarPath);
 
     if (savedAvatarPath) {
       newUser.profilePictureUrl = savedAvatarPath;
@@ -253,15 +238,16 @@ const saveOAuthUser = async (
       ResSuccessModel<IResponseUserToken>({
         tokens: {
           accessToken,
-          refreshToken
+          refreshToken,
         },
-        user: ResUserSuccessModel(newUser)
-      })
+        user: ResUserSuccessModel(newUser),
+      }),
     );
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
 const userController = {
   deleteUser,
@@ -270,7 +256,7 @@ const userController = {
   updatePassword,
   updateUserProfileImage,
   checkUserExistence,
-  saveOAuthUser
+  saveOAuthUser,
 };
 
 export default userController;

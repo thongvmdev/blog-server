@@ -1,41 +1,35 @@
+import type { IApiResponse, IApiResponseWithPaging, IHydratedUserModel, IPaging, IResponseError, IUserModelKeys } from '@/interfaces';
+
 import { pick } from 'lodash';
 
-import {
-  type IResponseError,
-  type IApiResponse,
-  type IPaging,
-  type IApiResponseWithPaging,
-  type IHydratedUserModel,
-  type IUserModelKeys
-} from '@/interfaces';
-
-const ResSuccessModel = <T>(data?: T): IApiResponse<T> => ({
-  success: true,
-  data
-});
-
-const ResSuccessModelWithPaging = <T>(data: T, paging: IPaging): IApiResponseWithPaging<T> => {
+function ResSuccessModel<T>(data?: T): IApiResponse<T> {
   return {
     success: true,
     data,
-    paging
   };
-};
+}
 
-const ResErrorModel = (message: string, errorCode?: number): IResponseError => ({
-  success: false,
-  message,
-  errorCode
-});
+function ResSuccessModelWithPaging<T>(data: T, paging: IPaging): IApiResponseWithPaging<T> {
+  return {
+    success: true,
+    data,
+    paging,
+  };
+}
 
-const ResUserSuccessModel = (
-  userData: IHydratedUserModel,
-  userFields: IUserModelKeys[] = ['email', 'profilePictureUrl']
-) => {
+function ResErrorModel(message: string, errorCode?: number): IResponseError {
+  return {
+    success: false,
+    message,
+    errorCode,
+  };
+}
+
+function ResUserSuccessModel(userData: IHydratedUserModel, userFields: IUserModelKeys[] = ['email', 'profilePictureUrl']) {
   return {
     id: userData._id,
-    ...pick(userData, userFields)
+    ...pick(userData, userFields),
   };
-};
+}
 
-export { ResSuccessModel, ResErrorModel, ResUserSuccessModel, ResSuccessModelWithPaging };
+export { ResErrorModel, ResSuccessModel, ResSuccessModelWithPaging, ResUserSuccessModel };

@@ -1,15 +1,15 @@
-import mongoose, { Schema } from 'mongoose';
-
 import { generateSlug } from '@/utils';
+
+import mongoose, { Schema } from 'mongoose';
 
 const CategorySchema: Schema = new Schema(
   {
     slug: { type: String, unique: true },
     name: { type: String, required: true },
     color: { type: String, default: null },
-    thumbnail: { type: String, default: null }
+    thumbnail: { type: String, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 CategorySchema.pre('save', function (next) {

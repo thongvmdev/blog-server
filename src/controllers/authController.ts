@@ -1,14 +1,15 @@
-import { type Request, type Response, type NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { nanoid } from 'nanoid';
+import type { IRefreshTokenSuccessData, IResponseUserToken } from '@/interfaces';
+import type { NextFunction, Request, Response } from 'express';
+import { envConfig } from '@/config/env.config';
 
 import { EHttpStatusCode, EJwtExpirationErrorCode, EJwtToken, EUserRole } from '@/enums';
 import { authentication, random } from '@/helpers';
-import { type IResponseUserToken, type IRefreshTokenSuccessData } from '@/interfaces';
-import { UserModel, ResSuccessModel, ResErrorModel, ResUserSuccessModel } from '@/models';
+import { ResErrorModel, ResSuccessModel, ResUserSuccessModel, UserModel } from '@/models';
 import { generateJwtPayload, handleResponseJwt, validateCredentials } from '@/utils';
+import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 
-const registerUser = async (req: Request, res: Response, next: NextFunction, role: EUserRole) => {
+async function registerUser(req: Request, res: Response, next: NextFunction, role: EUserRole) {
   try {
     const { email, password } = req.body;
 
@@ -35,9 +36,9 @@ const registerUser = async (req: Request, res: Response, next: NextFunction, rol
       name: emailPrefix,
       authentication: {
         salt,
-        password: authentication(salt, password)
+        password: authentication(salt, password),
       },
-      role
+      role,
     });
 
     await newUser.save();
@@ -48,25 +49,26 @@ const registerUser = async (req: Request, res: Response, next: NextFunction, rol
       ResSuccessModel<IResponseUserToken>({
         tokens: {
           accessToken,
-          refreshToken
+          refreshToken,
         },
-        user: ResUserSuccessModel(newUser)
-      })
+        user: ResUserSuccessModel(newUser),
+      }),
     );
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const registerAdmin = (req: Request, res: Response, next: NextFunction) => {
+function registerAdmin(req: Request, res: Response, next: NextFunction) {
   void registerUser(req, res, next, EUserRole.ADMIN);
-};
+}
 
-const register = (req: Request, res: Response, next: NextFunction) => {
+function register(req: Request, res: Response, next: NextFunction) {
   void registerUser(req, res, next, EUserRole.USER);
-};
+}
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
     const isValidCredentials = validateCredentials(email, password);
@@ -99,43 +101,44 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       ResSuccessModel<IResponseUserToken>({
         tokens: {
           accessToken,
-          refreshToken
+          refreshToken,
         },
-        user: ResUserSuccessModel(user)
-      })
+        user: ResUserSuccessModel(user),
+      }),
     );
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
-const refreshAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+async function refreshAccessToken(req: Request, res: Response, _next: NextFunction) {
   const refreshToken = req.body.refreshToken;
 
-  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(refreshToken, envConfig.JWT_SECRET, (err, user) => {
     if (err) {
       return res
         .status(EHttpStatusCode.UNAUTHORIZED)
         .json(ResErrorModel(err.message, EJwtExpirationErrorCode.REFRESH_TOKEN_EXPIRED));
     }
 
-    const newAccessToken = jwt.sign(generateJwtPayload(user), process.env.JWT_SECRET, {
-      expiresIn: EJwtToken.ACCESS_TOKEN_EXPIRATION
+    const newAccessToken = jwt.sign(generateJwtPayload(user), envConfig.JWT_SECRET, {
+      expiresIn: EJwtToken.ACCESS_TOKEN_EXPIRATION,
     });
 
     res.status(EHttpStatusCode.OK).json(
       ResSuccessModel<IRefreshTokenSuccessData>({
-        accessToken: newAccessToken
-      })
+        accessToken: newAccessToken,
+      }),
     );
   });
-};
+}
 
 const authController = {
   register,
   login,
   refreshAccessToken,
-  registerAdmin
+  registerAdmin,
 };
 
 export default authController;

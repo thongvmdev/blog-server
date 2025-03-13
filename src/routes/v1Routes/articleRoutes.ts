@@ -1,7 +1,7 @@
-import express from 'express';
-
 import { articleController } from '@/controllers';
+
 import { verifyTokenMiddleware } from '@/middlewares';
+import express from 'express';
 
 const router = express.Router();
 

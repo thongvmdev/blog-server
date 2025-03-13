@@ -1,7 +1,7 @@
-import express from 'express';
-
 import commentController from '@/controllers/commentController';
+
 import { verifyTokenMiddleware } from '@/middlewares';
+import express from 'express';
 
 const router = express.Router();
 

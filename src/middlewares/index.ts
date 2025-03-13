@@ -7,11 +7,11 @@ import verifyTokenGoogleProvider from './verifyTokenGoogleProvider';
 import verifyTokenMiddleware from './verifyTokenMiddleware';
 
 export {
+  checkAdminRoleMiddleware,
   errorHandlerMiddleware,
   limiterMiddleware,
-  verifyTokenMiddleware,
+  morganMiddleware,
   multerMiddleware,
   verifyTokenGoogleProvider,
-  checkAdminRoleMiddleware,
-  morganMiddleware
+  verifyTokenMiddleware,
 };

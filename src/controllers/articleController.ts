@@ -1,15 +1,12 @@
-import path from 'path';
+import type { CustomJwtMiddlewareRequest, IArticle } from '@/interfaces';
+import type { NextFunction, Request, Response } from 'express';
+import { EArticleStatus, EHttpStatusCode } from '@/enums';
+
+import { ArticleModel, ResErrorModel, ResSuccessModel, ResSuccessModelWithPaging } from '@/models';
 
 import dayjs from 'dayjs';
-import { type NextFunction, type Request, type Response } from 'express';
 import { difference, isEmpty, pick } from 'lodash';
-
 import { updateTagUsageCount } from './tagController';
-
-import { EArticleStatus, EHttpStatusCode } from '@/enums';
-import { type IArticle, type CustomJwtMiddlewareRequest } from '@/interfaces';
-import { ArticleModel, ResSuccessModel, ResErrorModel, ResSuccessModelWithPaging } from '@/models';
-import { deleteFolder } from '@/utils';
 
 /**
  * Calculates the relevance score for a given item based on its usage count, engagement score, and recency of use.
@@ -20,7 +17,7 @@ import { deleteFolder } from '@/utils';
  *   - `lastUsed`: A date string representing the last time the item was used.
  * @returns The calculated relevance score as a number.
  */
-export const calculateRelevanceScore = (item: Record<string, any>): number => {
+export function calculateRelevanceScore(item: Record<string, any>): number {
   const usageScore = item.usageCount * 0.5;
   const engagementScore = item.engagementScore * 0.3;
   const daysSinceLastUsed = dayjs().diff(dayjs(item.lastUsed), 'day');
@@ -28,10 +25,11 @@ export const calculateRelevanceScore = (item: Record<string, any>): number => {
   const recencyScore = Math.max(0, daysInMonth - daysSinceLastUsed) * 0.2;
 
   return usageScore + engagementScore + recencyScore;
-};
+}
 
 export function updateArticleMetrics(article: IArticle): void {
-  if (isEmpty(article)) return;
+  if (isEmpty(article))
+    return;
 
   article.usageCount += 1;
   article.engagementScore += 1;
@@ -46,7 +44,7 @@ const articleController = {
     req: CustomJwtMiddlewareRequest,
     res: Response,
     next: NextFunction,
-    increment: boolean
+    increment: boolean,
   ) {
     const { articleId } = req.params;
     const userId = req.user?.id;
@@ -54,7 +52,7 @@ const articleController = {
     try {
       const article = await ArticleModel.findOne({
         _id: articleId,
-        status: EArticleStatus.PUBLISHED
+        status: EArticleStatus.PUBLISHED,
       });
 
       if (!article) {
@@ -81,7 +79,8 @@ const articleController = {
       if (increment) {
         article.likedBy.push(userId);
         updateArticleMetrics(article);
-      } else {
+      }
+      else {
         article.likedBy = article.likedBy.filter((id) => {
           return id?.toString() !== userId;
         });
@@ -90,7 +89,8 @@ const articleController = {
       await article.save();
       const selectFields: Array<keyof IArticle> = ['likesCount', 'likedBy'];
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(pick(article, selectFields)));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -115,7 +115,8 @@ const articleController = {
 
       void updateTagUsageCount(tags, true);
       res.status(EHttpStatusCode.CREATED).json(ResSuccessModel(article));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -139,10 +140,11 @@ const articleController = {
           total: totalArticles,
           pages: Math.ceil(totalArticles / Number(limit)),
           page: Number(page),
-          limit: Number(limit)
-        })
+          limit: Number(limit),
+        }),
       );
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -166,10 +168,11 @@ const articleController = {
           total: totalArticles,
           pages: Math.ceil(totalArticles / Number(limit)),
           page: Number(page),
-          limit: Number(limit)
-        })
+          limit: Number(limit),
+        }),
       );
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -179,7 +182,7 @@ const articleController = {
       const { status, page = 1, limit = 10, title } = req.query;
       const query: Record<string, any> = {
         author: req.params.authorId,
-        ...(status && { status })
+        ...(status && { status }),
       };
 
       if (title) {
@@ -200,10 +203,11 @@ const articleController = {
           total: totalArticles,
           pages: Math.ceil(totalArticles / Number(limit)),
           page: Number(page),
-          limit: Number(limit)
-        })
+          limit: Number(limit),
+        }),
       );
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -219,7 +223,8 @@ const articleController = {
         return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('Article not found'));
       }
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(article));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -229,7 +234,7 @@ const articleController = {
       const { publishId } = req.params;
       const article = await ArticleModel.findOne({
         publishId,
-        status: EArticleStatus.PUBLISHED
+        status: EArticleStatus.PUBLISHED,
       })
         .populate('author', omitAuthorFields)
         .populate('categories', 'slug name color thumbnail')
@@ -239,7 +244,8 @@ const articleController = {
       await article.save();
 
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(article ?? null));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -269,7 +275,8 @@ const articleController = {
       void updateTagUsageCount(tagsToAdd, true);
 
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(article));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -281,26 +288,24 @@ const articleController = {
 
       const article = await ArticleModel.findOneAndDelete({
         _id: articleId,
-        author: userId
-      });
+        author: userId,
+      }, { returnDocument: 'after' });
 
       if (!article) {
         return res
           .status(EHttpStatusCode.NOT_FOUND)
           .json(
-            ResErrorModel('Article not found or you do not have permission to delete this article')
+            ResErrorModel('Article not found or you do not have permission to delete this article'),
           );
       }
 
-      const folderPath = path.join(__dirname, '../../uploads/articles', articleId);
-      deleteFolder(folderPath);
-
-      void updateTagUsageCount(article.tags, false);
+      updateTagUsageCount(article.tags, false);
 
       res
         .status(EHttpStatusCode.OK)
         .json(ResSuccessModel({ message: 'Article deleted successfully' }));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -316,7 +321,7 @@ const articleController = {
 
       const query = {
         $text: { $search: searchText as string },
-        ...(status && { status })
+        ...(status && { status }),
       };
 
       const articles = await ArticleModel.find(query)
@@ -324,7 +329,8 @@ const articleController = {
         .populate('categories');
 
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(articles));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -337,7 +343,7 @@ const articleController = {
   decrementLikesCount(req: Request, res: Response, next: NextFunction) {
     const increment = false;
     void articleController.updateLikesCount(req, res, next, increment);
-  }
+  },
 };
 
 export default articleController;

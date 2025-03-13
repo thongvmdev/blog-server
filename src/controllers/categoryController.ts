@@ -1,10 +1,10 @@
-import { type Request, type Response, type NextFunction } from 'express';
-import { uniqBy } from 'lodash';
+import type { ICategory } from '@/interfaces';
+import type { NextFunction, Request, Response } from 'express';
 
 import { EHttpStatusCode } from '@/enums';
-import { type ICategory } from '@/interfaces';
-import { CategoryModel, ResSuccessModel, ResErrorModel } from '@/models';
+import { CategoryModel, ResErrorModel, ResSuccessModel } from '@/models';
 import { generateSlug } from '@/utils';
+import { uniqBy } from 'lodash';
 
 const categoryController = {
   async createCategory(req: Request, res: Response, next: NextFunction) {
@@ -12,7 +12,8 @@ const categoryController = {
       const category = new CategoryModel(req.body);
       await category.save();
       res.status(EHttpStatusCode.CREATED).json(ResSuccessModel(category));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -21,7 +22,8 @@ const categoryController = {
     try {
       const categories = await CategoryModel.find();
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(categories));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -33,7 +35,8 @@ const categoryController = {
         return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('Category not found'));
       }
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(category));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -47,7 +50,8 @@ const categoryController = {
       Object.assign(category, req.body);
       await category.save();
       res.status(EHttpStatusCode.OK).json(ResSuccessModel(category));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -61,7 +65,8 @@ const categoryController = {
       res
         .status(EHttpStatusCode.OK)
         .json(ResSuccessModel({ message: 'Category deleted successfully' }));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
   },
@@ -81,10 +86,11 @@ const categoryController = {
 
       const insertedCategories = await CategoryModel.insertMany(uniqBy(categories, 'name'));
       res.status(EHttpStatusCode.CREATED).json(ResSuccessModel(insertedCategories));
-    } catch (error) {
+    }
+    catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 export default categoryController;

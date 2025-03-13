@@ -1,21 +1,12 @@
-const getEnvVar = (key: string, defaultValue?: string | number): string | number => {
-  const value = process.env[key];
-  if (value === undefined) {
-    if (defaultValue !== undefined) {
-      return defaultValue;
-    }
-    throw new Error(`Environment variable ${key} is not set`);
-  }
-  return value;
-};
+import { defineEnv, num, str } from '@daopk/env';
 
-const config = () => ({
-  NODE_ENV: getEnvVar('NODE_ENV', 'development'),
-  PORT: getEnvVar('PORT', 8080),
-  JWT_SECRET: getEnvVar('JWT_SECRET')
+export const envConfig = defineEnv({
+  NODE_ENV: str(),
+  JWT_SECRET: str(),
+  PORT: num({ default: 4000 }),
+  MONGO_URL: str(),
+  PWSECRET: str(),
+  GOOGLE_CLIENT_ID: str(),
 });
 
-const envConfig = config();
 console.log('🚀 ~ envConfig:', envConfig);
-
-export { envConfig };

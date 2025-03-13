@@ -1,6 +1,6 @@
-import { type Request } from 'express';
+import type { IUserModel } from '@/interfaces';
 
-import { type IUserModel } from '@/interfaces';
+import type { Request } from 'express';
 
 export interface IJwtUserPayload extends Pick<IUserModel, 'email' | 'role'> {
   id?: string;

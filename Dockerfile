@@ -10,18 +10,16 @@ LABEL BUILDTIME=$BUILDTIME \
 
 WORKDIR /app
 
-COPY package.json yarn.lock* .yarnrc.yml ./
+COPY package.json pnpm-lock.yaml ./
 
 RUN corepack enable
 
-RUN yarn set version berry
-
-RUN yarn install
+RUN pnpm install
 
 COPY . .
 
-RUN yarn build
+RUN pnpm run build
 
 EXPOSE ${PORT}
 
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]

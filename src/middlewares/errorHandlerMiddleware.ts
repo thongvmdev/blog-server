@@ -1,4 +1,4 @@
-import { type Request, type Response, type NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import { EHttpStatusCode } from '@/enums';
 import { ResErrorModel } from '@/models';
@@ -15,17 +15,17 @@ class AppError extends Error {
   }
 }
 
-const errorHandlerMiddleware = (err: AppError, req: Request, res: Response, next: NextFunction) => {
+function errorHandlerMiddleware(err: AppError, req: Request, res: Response, _next: NextFunction) {
   void logger.error(
     `${err.name}: ${err.message}\t${req.method}\t${req.url}\t${
       req.headers.origin
-    }, error: ${JSON.stringify(err)}`
+    }, error: ${JSON.stringify(err)}`,
   );
 
   const status = err.statusCode ? err.statusCode : EHttpStatusCode.INTERNAL_SERVER_ERROR;
   const errMessage = err.message || 'Server Error';
 
   res.status(status).json(ResErrorModel(errMessage, err.errorCode));
-};
+}
 
 export default errorHandlerMiddleware;

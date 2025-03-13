@@ -1,16 +1,16 @@
-import { type NextFunction, type Response } from 'express';
+import type { IRequestWithUploadMedia } from '@/interfaces';
 
+import type { NextFunction, Response } from 'express';
 import { EHttpStatusCode, ETypeUpload } from '@/enums';
-import { type IRequestWithUploadMedia } from '@/interfaces';
 import { ResErrorModel, ResSuccessModel } from '@/models';
 import { moveFileToUploadFolder } from '@/utils';
 
 const uploadController = {
-  async uploadImage(req: IRequestWithUploadMedia, res: Response, next: NextFunction) {
+  async uploadImage(req: IRequestWithUploadMedia, res: Response, _next: NextFunction) {
     const file = req.file;
     const { type, articleId } = req.body;
 
-    if (!type || !articleId) {
+    if (!type) {
       return res
         .status(EHttpStatusCode.BAD_REQUEST)
         .json(ResErrorModel('Type and ArticleId are required'));
@@ -27,7 +27,7 @@ const uploadController = {
     const imageUrl = moveFileToUploadFolder(file.filename, type, articleId);
 
     return res.status(EHttpStatusCode.OK).json(ResSuccessModel({ imageUrl }));
-  }
+  },
 };
 
 export default uploadController;

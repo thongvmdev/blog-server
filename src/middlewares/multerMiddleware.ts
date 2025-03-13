@@ -1,27 +1,27 @@
-import path from 'path';
-
-import multer from 'multer';
+import path from 'node:path';
 
 import { ensureDir } from '@/utils';
 
+import multer from 'multer';
+
 const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
+  destination(_req, _file, cb) {
     const folderPath = path.join(__dirname, '../../uploads');
 
     ensureDir(folderPath);
     cb(null, folderPath);
   },
-  filename: function (_req, file, cb) {
+  filename(_req, file, cb) {
     const timestamp = Date.now();
     const originalName = file.originalname.replace(/\s+/g, '-').toLowerCase();
     cb(null, `${timestamp}-${originalName}`);
-  }
+  },
 });
 
 const uploadImg = multer({
   storage,
   limits: {
-    fileSize: 5000000 // Limit file size to 5MB
+    fileSize: 5000000, // Limit file size to 5MB
   },
   fileFilter(_, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -29,11 +29,11 @@ const uploadImg = multer({
     }
 
     cb(null, true);
-  }
+  },
 });
 
 const multerMiddleware = {
-  uploadImg
+  uploadImg,
 };
 
 export default multerMiddleware;

@@ -1,8 +1,8 @@
+import type { IUserModel } from '@/interfaces';
+import { EUserRole } from '@/enums';
+
 import mongoose from 'mongoose';
 import validator from 'validator';
-
-import { EUserRole } from '@/enums';
-import { type IUserModel } from '@/interfaces';
 
 const UserSchema = new mongoose.Schema<IUserModel>(
   {
@@ -10,16 +10,16 @@ const UserSchema = new mongoose.Schema<IUserModel>(
       type: String,
       minlength: 1,
       maxlength: 40,
-      unique: true
+      unique: true,
     },
     name: {
       type: String,
       minlength: 1,
-      maxlength: 30
+      maxlength: 30,
     },
     bio: {
       type: String,
-      maxlength: 200
+      maxlength: 200,
     },
     email: {
       type: String,
@@ -27,24 +27,24 @@ const UserSchema = new mongoose.Schema<IUserModel>(
       unique: true,
       index: true,
       validate: {
-        validator: (email) => validator.isEmail(email),
-        message: 'Invalid email format'
-      }
+        validator: email => validator.isEmail(email),
+        message: 'Invalid email format',
+      },
     },
     profilePictureUrl: {
-      type: String
+      type: String,
     },
     authentication: {
       password: { type: String },
-      salt: { type: String }
+      salt: { type: String },
     },
     role: {
       type: String,
       enum: [EUserRole.USER, EUserRole.ADMIN],
-      default: EUserRole.USER
-    }
+      default: EUserRole.USER,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const UserModel = mongoose.model<IUserModel>('User', UserSchema);

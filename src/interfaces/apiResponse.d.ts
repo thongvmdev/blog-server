@@ -1,4 +1,4 @@
-import { type IPaging } from './paging';
+import type { IPaging } from './paging';
 
 export interface IApiResponse<T> {
   success: boolean;

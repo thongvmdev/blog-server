@@ -1,7 +1,7 @@
-import { Router } from 'express';
-
 import tagController from '@/controllers/tagController';
+
 import { checkAdminRoleMiddleware, verifyTokenMiddleware } from '@/middlewares';
+import { Router } from 'express';
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.patch(
   '/:id/moderate',
   verifyTokenMiddleware,
   checkAdminRoleMiddleware,
-  tagController.updateTag
+  tagController.updateTag,
 );
 router.delete('/:id', verifyTokenMiddleware, checkAdminRoleMiddleware, tagController.deleteTag);
 

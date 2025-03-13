@@ -1,14 +1,14 @@
-import express from 'express';
+import { limiterMiddleware } from '@/middlewares';
 
+import express from 'express';
 import articleRoutes from './articleRoutes';
 import authRoutes from './authRoutes';
 import categoryRoutes from './categoryRoutes';
 import commentRoutes from './commentRoutes';
 import tagRoutes from './tagRoutes';
 import uploadRoutes from './uploadRoutes';
-import userRoutes from './userRoutes';
 
-import { limiterMiddleware } from '@/middlewares';
+import userRoutes from './userRoutes';
 
 const router = express.Router();
 

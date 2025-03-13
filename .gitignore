@@ -9,7 +9,7 @@ logs/
 *.log.*
 
 # Environment variables
-.env
+.env/
 
 dist
 uploads

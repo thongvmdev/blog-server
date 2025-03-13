@@ -6,9 +6,9 @@ const TagSchema: Schema = new Schema(
     description: { type: String, default: '' },
     suggested: { type: Boolean, default: false },
     moderated: { type: Boolean, default: false },
-    usageCount: { type: Number, default: 0 }
+    usageCount: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const TagModel = mongoose.model('Tag', TagSchema);

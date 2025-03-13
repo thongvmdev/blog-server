@@ -1,9 +1,10 @@
+import type { IArticle } from '@/interfaces';
+import { EArticleStatus } from '@/enums';
 import mongoose, { Schema } from 'mongoose';
+
 import { customAlphabet } from 'nanoid';
 import slugify from 'slugify';
 
-import { EArticleStatus } from '@/enums';
-import { type IArticle } from '@/interfaces';
 const nanoid = customAlphabet('1234567890abcdef');
 
 const ArticleSchema: Schema = new Schema<IArticle>(
@@ -23,14 +24,14 @@ const ArticleSchema: Schema = new Schema<IArticle>(
     status: {
       type: String,
       enum: [EArticleStatus.DRAFT, EArticleStatus.PUBLISHED],
-      default: EArticleStatus.DRAFT
+      default: EArticleStatus.DRAFT,
     },
     usageCount: { type: Number, default: 0 },
     engagementScore: { type: Number, default: 0 },
     lastUsed: { type: Date, default: null },
-    relevanceScore: { type: Number, default: 0 }
+    relevanceScore: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 ArticleSchema.pre('save', async function (next) {
@@ -55,7 +56,7 @@ ArticleSchema.index({
   content: 'text',
   tags: 'text',
   categories: 'text',
-  username: 'text'
+  username: 'text',
 });
 
 export const ArticleModel = mongoose.model<IArticle>('Article', ArticleSchema);

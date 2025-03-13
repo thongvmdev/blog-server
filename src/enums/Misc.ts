@@ -1,9 +1,9 @@
 export enum EUserRole {
   USER = 'user',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
 }
 
 export enum ETypeUpload {
   ARTICLES = 'articles',
-  USERS = 'users'
+  USERS = 'users',
 }

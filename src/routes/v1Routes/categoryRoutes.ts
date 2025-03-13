@@ -1,7 +1,7 @@
-import { Router } from 'express';
-
 import { categoryController } from '@/controllers';
+
 import { verifyTokenMiddleware } from '@/middlewares';
+import { Router } from 'express';
 
 const router = Router();
 

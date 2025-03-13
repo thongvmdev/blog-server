@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
+    "target": "ES2021" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "baseUrl": "./",
+    "rootDir": "./src",
+    "module": "commonjs" /* Specify what module code is generated. */,
     "paths": {
       "@/*": ["src/*"]
     },
-    "target": "ES2021" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "rootDir": "./src",
-    "module": "commonjs" /* Specify what module code is generated. */,
+    "allowJs": true,
+    "strict": false /* Enable all strict type-checking options. */, // ! TODO Test
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
     "removeComments": true /* Disable emitting comments. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    "strict": false /* Enable all strict type-checking options. */, // ! TODO Test
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "allowJs": true
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "__tests__", "coverage"]

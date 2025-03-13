@@ -1,21 +1,22 @@
-import fs from 'fs';
-import path from 'path';
+import type { ETypeUpload } from '@/enums';
+import fs from 'node:fs';
+
+import path from 'node:path';
 
 import axios from 'axios';
 
-import { type ETypeUpload } from '@/enums';
+const folderName = 'uploads';
 
-export const ensureDir = (dirPath: string): void => {
+export function ensureDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
-};
+}
 
-export const moveFileToUploadFolder = (fileName: string, type: ETypeUpload, id: string): string => {
-  const folderName = 'uploads';
+export function moveFileToUploadFolder(fileName: string, type: ETypeUpload, id?: string): string {
   const folderPath = path.join(__dirname, `../../${folderName}`);
   const originFilePath = path.join(folderPath, fileName);
-  const newFolderPath = path.join(folderPath, type, id);
+  const newFolderPath = path.join(folderPath, type, id ?? '');
   const newFilePath = path.join(newFolderPath, fileName);
 
   ensureDir(newFolderPath);
@@ -23,17 +24,18 @@ export const moveFileToUploadFolder = (fileName: string, type: ETypeUpload, id: 
   const newFilePathArr = newFilePath.split(`${folderName}/`);
 
   return `/${folderName}/${newFilePathArr?.[1]}`;
-};
+}
 
-export const deleteFolder = (folderPath: string) => {
+export function deleteFolder(folderPath: string) {
   if (fs.existsSync(folderPath)) {
     fs.rmSync(folderPath, { recursive: true, force: true });
-  } else {
+  }
+  else {
     console.error(`Folder not found: ${folderPath}`);
   }
-};
+}
 
-export const downloadAndSaveImage = async (imageUrl: string, userId: string): Promise<string> => {
+export async function downloadAndSaveImage(imageUrl: string, userId: string): Promise<string> {
   const uploadsPath = path.join(__dirname, '../../uploads/users', userId);
 
   ensureDir(uploadsPath);
@@ -47,7 +49,7 @@ export const downloadAndSaveImage = async (imageUrl: string, userId: string): Pr
   const response = await axios({
     method: 'get',
     url: imageUrl,
-    responseType: 'stream'
+    responseType: 'stream',
   });
 
   const writer = fs.createWriteStream(filePath);
@@ -58,5 +60,5 @@ export const downloadAndSaveImage = async (imageUrl: string, userId: string): Pr
     writer.on('error', reject);
   });
 
-  return `/users/${userId}/${fileName}`;
-};
+  return `${folderName}/users/${userId}/${fileName}`;
+}

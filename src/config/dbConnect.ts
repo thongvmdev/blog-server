@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 
-const connectDB = async (): Promise<void> => {
+import { envConfig } from './env.config';
+
+async function connectDB(): Promise<void> {
   try {
-    const mongoURI = process.env.MONGO_URL;
+    const mongoURI = envConfig.MONGO_URL;
     await mongoose.connect(mongoURI);
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
   }
-};
+}
 
 export default connectDB;

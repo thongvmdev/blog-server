@@ -1,4 +1,4 @@
-import { type HydratedDocument } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 
 export interface IUserModel extends mongoose.Document {
   username: string;

@@ -1,5 +1,5 @@
-import { type Request } from 'express';
-import { type Multer } from 'multer';
+import type { Request } from 'express';
+import type { Multer } from 'multer';
 
 export interface IRequestWithUploadMedia extends Request {
   user: IJwtUserPayload;
