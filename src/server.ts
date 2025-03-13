@@ -1,4 +1,11 @@
+/* eslint-disable import/first */
 import type { NextFunction, Request, Response } from 'express';
+import { envConfig } from './config/env.config';
+
+if (envConfig.NODE_ENV !== 'development') {
+  // eslint-disable-next-line ts/no-require-imports
+  require('module-alias/register');
+}
 
 import path from 'node:path';
 import corsOptions from '@/config/corsOptions';
@@ -14,16 +21,10 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
-import { envConfig } from './config/env.config';
 import { ResErrorModel } from './models';
 
 // eslint-disable-next-line ts/no-require-imports
 require('express-async-errors');
-
-if (envConfig.NODE_ENV !== 'development') {
-  // eslint-disable-next-line ts/no-require-imports
-  require('module-alias/register');
-}
 
 void connectDB();
 
