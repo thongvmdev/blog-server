@@ -240,10 +240,14 @@ const articleController = {
         .populate('categories', 'slug name color thumbnail')
         .populate('tags', 'name description');
 
+      if (!article) {
+        return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('Article not found'));
+      }
+
       updateArticleMetrics(article);
       await article.save();
 
-      res.status(EHttpStatusCode.OK).json(ResSuccessModel(article ?? null));
+      res.status(EHttpStatusCode.OK).json(ResSuccessModel(article));
     }
     catch (error) {
       next(error);

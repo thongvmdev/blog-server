@@ -2,7 +2,6 @@ import type { CustomJwtMiddlewareRequest, IDeletedUserResponse, IJwtUserPayload,
 import type { NextFunction, Request, Response } from 'express';
 
 import type { TokenPayload } from 'google-auth-library';
-import fs from 'node:fs';
 import path from 'node:path';
 import { EHttpStatusCode, ETypeUpload } from '@/enums';
 
@@ -13,6 +12,7 @@ import {
   downloadAndSaveImage,
   handleResponseJwt,
   moveFileToUploadFolder,
+  removeOldProfilePicture,
 } from '@/utils';
 import { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid';
@@ -139,28 +139,18 @@ async function updateUserProfileImage(req: IRequestWithUploadMedia, res: Respons
   try {
     const user = await UserModel.findById(req.user.id);
     const file = req.file;
-    const { type } = req.body;
 
     if (!user) {
       return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('User not found'));
-    }
-
-    if (!type || type !== ETypeUpload.USERS) {
-      return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('Type is invalid'));
     }
 
     if (!file) {
       return res.status(EHttpStatusCode.BAD_REQUEST).json(ResErrorModel('No file uploaded'));
     }
 
-    if (user.profilePictureUrl) {
-      const oldImagePath = path.join(__dirname, '../../', user.profilePictureUrl);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
+    removeOldProfilePicture(user.profilePictureUrl, req);
 
-    const imageUrl = moveFileToUploadFolder(file.filename, type, user.id);
+    const imageUrl = moveFileToUploadFolder(req, file.filename, ETypeUpload.USERS, user.id);
     user.profilePictureUrl = imageUrl;
 
     await user.save();
@@ -223,8 +213,7 @@ async function saveOAuthUser(req: CustomJwtMiddlewareRequest, res: Response, nex
       name: emailPrefix,
     });
 
-    const savedAvatarPath = await downloadAndSaveImage(picture, newUser.id);
-    console.log('🚀 ~ savedAvatarPath:', savedAvatarPath);
+    const savedAvatarPath = await downloadAndSaveImage(req, picture, newUser.id);
 
     if (savedAvatarPath) {
       newUser.profilePictureUrl = savedAvatarPath;

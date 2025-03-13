@@ -1,6 +1,7 @@
 import type { IUserModel } from '@/interfaces';
-import { EUserRole } from '@/enums';
+import { envConfig } from '@/config/env.config';
 
+import { EUserRole } from '@/enums';
 import mongoose from 'mongoose';
 import validator from 'validator';
 
@@ -33,6 +34,15 @@ const UserSchema = new mongoose.Schema<IUserModel>(
     },
     profilePictureUrl: {
       type: String,
+      validate: {
+        validator: (url) => {
+          if (envConfig.NODE_ENV === 'development' && url.startsWith('http://localhost')) {
+            return true;
+          }
+          return validator.isURL(url);
+        },
+        message: 'Invalid URL format',
+      },
     },
     authentication: {
       password: { type: String },

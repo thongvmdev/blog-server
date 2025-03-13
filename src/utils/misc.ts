@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import mongoose from 'mongoose';
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -23,4 +24,8 @@ export function removeLeadingSlash(str: string): string {
 
 export function convertToObjectId(ids: string[]): mongoose.Types.ObjectId[] {
   return ids.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
+}
+
+export function getBaseUrl(req: Request) {
+  return `${req.protocol}://${req.get('host')}`;
 }
