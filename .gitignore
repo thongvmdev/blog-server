@@ -8,8 +8,13 @@ logs/
 *.log
 *.log.*
 
-# Environment variables
-.env/
+# Ignore all .env files
+.env
+.env.*
+
+# Exclude .local suffix files (track them)
+!.env.local
+!.env.*.local
 
 dist
 uploads
