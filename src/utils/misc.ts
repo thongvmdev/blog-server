@@ -27,5 +27,6 @@ export function convertToObjectId(ids: string[]): mongoose.Types.ObjectId[] {
 }
 
 export function getBaseUrl(req: Request) {
-  return `${req.protocol}://${req.get('host')}`;
+  const protocol = req.get('host')?.includes('localhost') ? 'http' : 'https';
+  return `${protocol}://${req.get('host')}`;
 }
