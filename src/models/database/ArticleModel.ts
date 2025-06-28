@@ -1,5 +1,5 @@
 import type { IArticle } from '@/interfaces';
-import { EArticleStatus } from '@/enums';
+import { EArticleStatus, EContentType } from '@/enums';
 import mongoose, { Schema } from 'mongoose';
 
 import { customAlphabet } from 'nanoid';
@@ -13,6 +13,11 @@ const ArticleSchema: Schema = new Schema<IArticle>(
     subTitle: { type: String, default: '' },
     slug: { type: String, default: null },
     content: { type: String, default: '' },
+    contentType: {
+      type: String,
+      enum: [EContentType.HTML, EContentType.MARKDOWN],
+      default: EContentType.HTML,
+    },
     coverImage: { type: String, default: '' },
     publishId: { type: String, default: null, unique: true },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },

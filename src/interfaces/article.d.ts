@@ -1,3 +1,4 @@
+import type { EContentType } from '@/enums';
 import type { Document } from 'mongoose';
 
 export interface IArticle extends Document {
@@ -5,6 +6,7 @@ export interface IArticle extends Document {
   subTitle: string;
   slug: string | null;
   content: string;
+  contentType: EContentType;
   coverImage: string;
   publishId: string | null;
   author: mongoose.Types.ObjectId;
