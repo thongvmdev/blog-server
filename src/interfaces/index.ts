@@ -1,6 +1,7 @@
 export * from './apiResponse';
 export * from './article';
 export * from './categories';
+export * from './grant';
 export * from './jwt';
 export * from './paging';
 export * from './reqUpload';

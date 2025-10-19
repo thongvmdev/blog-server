@@ -15,7 +15,9 @@ function verifyTokenMiddleware(req: CustomJwtMiddlewareRequest, res: Response, n
       .json(ResErrorModel('No token provided', EJwtExpirationErrorCode.NO_TOKEN_PROVIDED));
   }
 
-  jwt.verify(token.split(' ')[1], envConfig.JWT_SECRET, (err, user: IJwtUserPayload) => {
+  // Verify using ACCESS secret only - refresh tokens will automatically fail verification
+  // This provides cryptographic separation between token types
+  jwt.verify(token.split(' ')[1], envConfig.JWT_ACCESS_SECRET, (err, user: IJwtUserPayload) => {
     if (err) {
       return res
         .status(EHttpStatusCode.UNAUTHORIZED)

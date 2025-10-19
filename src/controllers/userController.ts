@@ -10,7 +10,7 @@ import { ResErrorModel, ResSuccessModel, ResUserSuccessModel, UserModel } from '
 import {
   deleteFolder,
   downloadAndSaveImage,
-  handleResponseJwt,
+  handleResponseJwtWithGrant,
   moveFileToUploadFolder,
   removeOldProfilePicture,
 } from '@/utils';
@@ -170,7 +170,9 @@ async function checkUserExistence(req: IRequestWithUploadMedia, res: Response, n
     const user = await UserModel.findOne({ email });
 
     if (user) {
-      const { accessToken, refreshToken } = handleResponseJwt(user);
+      const { accessToken, refreshToken, grantId } = await handleResponseJwtWithGrant(user);
+
+      console.log('🔐 Grant created for OAuth user check:', { userId: user._id, grantId });
 
       return res.status(EHttpStatusCode.OK).json(
         ResSuccessModel<IResponseUserToken>({
@@ -221,7 +223,9 @@ async function saveOAuthUser(req: CustomJwtMiddlewareRequest, res: Response, nex
 
     await newUser.save();
 
-    const { accessToken, refreshToken } = handleResponseJwt(newUser);
+    const { accessToken, refreshToken, grantId } = await handleResponseJwtWithGrant(newUser);
+
+    console.log('🔐 Grant created for new OAuth user:', { userId: newUser._id, grantId });
 
     res.status(EHttpStatusCode.OK).json(
       ResSuccessModel<IResponseUserToken>({

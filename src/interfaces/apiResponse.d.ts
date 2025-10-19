@@ -16,3 +16,8 @@ export interface IResponseError {
   message: string;
   errorCode: number;
 }
+
+export interface IRefreshTokenSuccessData {
+  accessToken: string;
+  refreshToken: string;
+}
