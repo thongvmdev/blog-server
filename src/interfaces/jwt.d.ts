@@ -2,7 +2,12 @@ import type { IUserModel } from '@/interfaces';
 
 import type { Request } from 'express';
 
-export interface IJwtUserPayload extends Pick<IUserModel, 'email' | 'role'> {
+interface IJwtDecodedPayload {
+  iat: number;
+  exp: number;
+}
+
+export interface IJwtUserPayload extends IJwtDecodedPayload, Pick<IUserModel, 'email' | 'role'> {
   id?: string;
   grantId?: string;
 }

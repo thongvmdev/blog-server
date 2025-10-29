@@ -2,7 +2,7 @@ import type { HydratedDocument } from 'mongoose';
 
 export interface IConsumedToken {
   hash: string;
-  issuedAt: Date;
+  expiresAt: number;
 }
 
 export interface IGrantModel extends mongoose.Document {

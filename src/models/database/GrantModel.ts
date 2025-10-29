@@ -14,7 +14,7 @@ const GrantSchema = new mongoose.Schema<IGrantModel>(
       type: [
         {
           hash: { type: String, required: true },
-          issuedAt: { type: Date, required: true },
+          expiresAt: { type: Number, required: true },
         },
       ],
       default: [],

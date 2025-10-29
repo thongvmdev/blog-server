@@ -5,7 +5,7 @@ import { envConfig } from '@/config/env.config';
 import { EHttpStatusCode, EJwtExpirationErrorCode, EJwtToken, EUserRole } from '@/enums';
 import { authentication, random } from '@/helpers';
 import { GrantModel, ResErrorModel, ResSuccessModel, ResUserSuccessModel, UserModel } from '@/models';
-import { generateJwtPayload, handleResponseJwt, handleResponseJwtWithGrant, hashToken, revokeGrant, validateCredentials } from '@/utils';
+import { handleResponseJwt, handleResponseJwtWithGrant, hashToken, revokeGrant, validateCredentials } from '@/utils';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 
@@ -178,19 +178,13 @@ async function refreshAccessToken(req: Request, res: Response, next: NextFunctio
         );
     }
 
-    // Token is valid - mark as consumed with issued timestamp from JWT
     grant.consumedRefreshTokens.push({
       hash: tokenHash,
-      issuedAt: new Date((decoded as any).iat * 1000), // JWT iat is in seconds, convert to milliseconds
+      expiresAt: decoded.exp * 1000,
     });
 
-    // Remove tokens older than refresh token lifetime (30 days) based on when they were ISSUED
-    // This ensures tokens are kept for exactly their lifetime from issuance, not consumption time
-    const refreshTokenLifetimeMs = EJwtToken.REFRESH_TOKEN_EXPIRATION * 1000;
-    const cutoffDate = new Date(Date.now() - refreshTokenLifetimeMs);
-
     grant.consumedRefreshTokens = grant.consumedRefreshTokens.filter(
-      token => token.issuedAt > cutoffDate,
+      token => token.expiresAt > Date.now(),
     );
 
     console.log('🔄 Token rotated successfully:', {
@@ -198,7 +192,7 @@ async function refreshAccessToken(req: Request, res: Response, next: NextFunctio
       userId: decoded.id,
       consumedTokensCount: grant.consumedRefreshTokens.length,
       oldestTokenAge: grant.consumedRefreshTokens.length > 0
-        ? Math.floor((Date.now() - grant.consumedRefreshTokens[0].issuedAt.getTime()) / 1000 / 60 / 60 / 24)
+        ? Math.floor((Date.now() - grant.consumedRefreshTokens[0].expiresAt * 1000) / 1000 / 60 / 60 / 24)
         : 0,
     });
 
