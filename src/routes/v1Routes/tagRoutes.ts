@@ -8,7 +8,7 @@ const router = Router();
 router.post('/', verifyTokenMiddleware, tagController.createTags);
 router.post('/bulk', verifyTokenMiddleware, checkAdminRoleMiddleware, tagController.addTagsByAdmin);
 router.get('/suggest', tagController.getSuggestedTags);
-router.get('/', verifyTokenMiddleware, checkAdminRoleMiddleware, tagController.getTags);
+router.get('/', verifyTokenMiddleware, tagController.getTags);
 router.get('/:id', tagController.getTagById);
 router.patch(
   '/:id/moderate',
