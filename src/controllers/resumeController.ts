@@ -41,15 +41,9 @@ async function createResume(req: CustomJwtMiddlewareRequest, res: Response, next
   }
 }
 
-async function getResume(req: CustomJwtMiddlewareRequest, res: Response, next: NextFunction) {
+async function getMyResume(req: CustomJwtMiddlewareRequest, res: Response, next: NextFunction) {
   try {
-    const userId = (req.user as IJwtUserPayload)?.id;
-
-    if (!userId) {
-      return res.status(EHttpStatusCode.UNAUTHORIZED).json(ResErrorModel('User not authenticated.'));
-    }
-
-    const resume = await ResumeModel.findOne({ user: userId }).populate('user', '-authentication');
+    const resume = await ResumeModel.findOne({ user: '67d52f86bd4eab967191bd52' }).populate('user', '-authentication');
 
     if (!resume) {
       return res.status(EHttpStatusCode.NOT_FOUND).json(ResErrorModel('Resume not found.'));
@@ -132,7 +126,7 @@ async function deleteResume(req: CustomJwtMiddlewareRequest, res: Response, next
 
 const resumeController = {
   createResume,
-  getResume,
+  getMyResume,
   getResumeById,
   updateResume,
   deleteResume,
