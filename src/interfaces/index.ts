@@ -4,6 +4,7 @@ export * from './categories';
 export * from './jwt';
 export * from './paging';
 export * from './reqUpload';
+export * from './resume';
 export * from './tag';
 export * from './user';
 export * from './userResponseData';

@@ -5,6 +5,7 @@ import articleRoutes from './articleRoutes';
 import authRoutes from './authRoutes';
 import categoryRoutes from './categoryRoutes';
 import commentRoutes from './commentRoutes';
+import resumeRoutes from './resumeRoutes';
 import tagRoutes from './tagRoutes';
 import uploadRoutes from './uploadRoutes';
 
@@ -19,5 +20,6 @@ router.use('/comments', commentRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/tags', tagRoutes);
+router.use('/resumes', resumeRoutes);
 
 export default router;

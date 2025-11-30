@@ -15,7 +15,8 @@
     "build": "rm -rf ./dist && tsc",
     "start": "node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed:resume": "ts-node -r tsconfig-paths/register src/scripts/seedResume.ts"
   },
   "dependencies": {
     "@daopk/env": "^1.2.0",
